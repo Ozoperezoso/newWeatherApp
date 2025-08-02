@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-r from-blue-400 to-blue-600 flex justify-center items-center min-h-screen p-4">
+    <div class="bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md text-center transform transition-transform duration-300 hover:scale-105">
+        <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 mb-6">Weather App</h1>
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <input type-="text" id="city-input" placeholder="Enter city" class="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+            <button id="search-btn" class="bg-blue-500 text-white p-3 rounded-lg shadow-md hover:bg-blue-600 transition-colors transform hover:scale-105"><i class="fas fa-search"></i></button>
+            <button id="location-btn" class="bg-green-500 text-white p-3 rounded-lg shadow-md hover:bg-green-600 transition-colors transform hover:scale-105"><i class="fas fa-map-marker-alt"></i></button>
+        </div>
+        <div id="location-info" class="text-gray-600 text-lg mb-4"></div>
+        <div id="weather-info" class="opacity-0 transform translate-y-5 transition-all duration-500"></div>
+        <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-6"></div>
+        <div class="attribution mt-8 text-xs text-gray-500">
+            <p>Data &copy; OpenStreetMap contributors, ODbL 1.0. <a href="http://osm.org/copyright" target="_blank" class="text-blue-500 hover:underline">http://osm.org/copyright</a></p>
+        </div>
+    </div>
+    <div class="loader-container hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-50">
+        <div class="loader border-6 border-t-6 border-t-blue-500 border-gray-200 rounded-full w-16 h-16 animate-spin"></div>
+    </div>
+    <script src="config.js"></script>
+    <script src="weather-icons.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
