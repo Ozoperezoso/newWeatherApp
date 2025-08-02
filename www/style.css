@@ -1,0 +1,284 @@
+/* Full screen and responsive design */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body {
+    /* Full screen background */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: -moz-available;
+    min-height: stretch;
+    
+    /* Safe area handling for notches and system UI */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    
+    /* Ensure proper scaling */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+}
+
+/* Dynamic background system */
+html {
+    min-height: 100vh;
+    width: 100%;
+    background-attachment: fixed;
+    background-size: cover;
+    transition: background 0.5s ease;
+}
+
+body {
+    background-attachment: fixed;
+    background-size: cover;
+    transition: background 0.5s ease;
+}
+
+/* Default background (main screen) */
+body.default-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* White background for weather results */
+body.white-bg {
+    background: #ffffff;
+}
+
+/* Weather condition backgrounds */
+body.sunny-bg {
+    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+}
+
+body.cloudy-bg {
+    background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+}
+
+body.rainy-bg {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+body.snowy-bg {
+    background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+}
+
+body.stormy-bg {
+    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+}
+
+body.night-bg {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+/* Status bar height compensation */
+.status-bar-height {
+    height: env(safe-area-inset-top);
+    background-color: #3B82F6;
+}
+
+/* Ensure the main container respects safe areas */
+.main-container {
+    padding-top: max(env(safe-area-inset-top), 20px);
+    padding-bottom: max(env(safe-area-inset-bottom), 20px);
+}
+
+/* Notch-safe button positioning */
+.notch-safe-button {
+    margin-top: env(safe-area-inset-top);
+}
+
+/* iOS specific notch handling */
+@supports (padding: max(0px)) {
+    body {
+        padding-top: max(env(safe-area-inset-top), 20px);
+        padding-bottom: max(env(safe-area-inset-bottom), 20px);
+    }
+}
+
+/* Android specific status bar handling */
+@media screen and (max-width: 768px) {
+    body {
+        /* Additional padding for Android devices with notches */
+        padding-top: calc(env(safe-area-inset-top) + 10px);
+    }
+}
+
+/* Android notch specific handling */
+@supports (padding: env(safe-area-inset-top)) {
+    body {
+        /* Ensure proper safe area handling on Android */
+        padding-top: max(env(safe-area-inset-top), 24px);
+        padding-bottom: max(env(safe-area-inset-bottom), 16px);
+    }
+}
+
+/* Full screen responsive container */
+.bg-gradient-to-r {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: max(env(safe-area-inset-top), 20px) max(env(safe-area-inset-left), 16px) max(env(safe-area-inset-bottom), 20px) max(env(safe-area-inset-right), 16px);
+    box-sizing: border-box;
+}
+
+/* Responsive card design */
+.weather-card {
+    width: 100%;
+    max-width: 400px;
+    min-height: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transition: all 0.3s ease;
+}
+
+/* Weather info container with dynamic styling */
+.weather-info-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 24px;
+    margin: 16px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* White background specific styling */
+body.white-bg .weather-info-container {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Forecast items with dynamic styling */
+.forecast-item {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.forecast-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* White background specific forecast styling */
+body.white-bg .forecast-item {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.white-bg .forecast-item:hover {
+    background: rgba(248, 250, 252, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Responsive text sizing */
+.responsive-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.responsive-input {
+    font-size: clamp(14px, 3vw, 16px);
+    padding: clamp(12px, 3vw, 16px);
+}
+
+.responsive-button {
+    font-size: clamp(14px, 3vw, 16px);
+    padding: clamp(12px, 3vw, 16px);
+    min-height: 48px;
+}
+
+/* Landscape orientation adjustments */
+@media screen and (orientation: landscape) {
+    .bg-gradient-to-r {
+        padding: max(env(safe-area-inset-top), 12px) max(env(safe-area-inset-left), 20px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-right), 20px);
+    }
+    
+    .weather-card {
+        max-width: 600px;
+        min-height: 400px;
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+    }
+}
+
+/* Small screen optimizations */
+@media screen and (max-width: 480px) {
+    .weather-card {
+        margin: 0 8px;
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+    
+    .bg-gradient-to-r {
+        padding: max(env(safe-area-inset-top), 16px) max(env(safe-area-inset-left), 12px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-right), 12px);
+    }
+}
+
+/* Large screen optimizations */
+@media screen and (min-width: 768px) {
+    .weather-card {
+        max-width: 500px;
+        padding: 40px 32px;
+    }
+}
+
+/* Status bar height compensation - make it transparent */
+.status-bar-height {
+    height: env(safe-area-inset-top);
+    background: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+/* WebView container notch handling */
+.webview-container {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Loader positioning for notch devices */
+.loader-container {
+    padding-top: env(safe-area-inset-top);
+}

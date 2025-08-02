@@ -2,5 +2,19 @@
   "appId": "com.example.weatherapp",
   "appName": "WeatherApp",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "StatusBar": {
+      "style": "light",
+      "backgroundColor": "#00000000",
+      "overlaysWebView": true
+    },
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "backgroundColor": "#667eea"
+    }
+  },
+  "android": {
+    "backgroundColor": "#667eea"
+  }
 }

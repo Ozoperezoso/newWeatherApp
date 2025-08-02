@@ -4,7 +4,9 @@
   "main": "config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx cap sync"
+    "build": "npx cap sync",
+    "serve": "npx http-server www -p 8080 -o",
+    "dev": "npx http-server www -p 8080 -o"
   },
   "keywords": [],
   "author": "",
@@ -12,11 +14,13 @@
   "description": "",
   "devDependencies": {
     "@capacitor/cli": "^7.4.2",
-    "@capacitor/core": "^7.4.2"
+    "@capacitor/core": "^7.4.2",
+    "http-server": "^14.1.1"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.2",
     "@capacitor/ios": "^7.4.2",
+    "@capacitor/status-bar": "^7.0.1",
     "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.2"
   }
 }
