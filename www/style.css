@@ -10,6 +10,7 @@ html, body {
     height: 100%;
     overflow-x: hidden;
     position: relative;
+    overflow-y: auto;
 }
 
 body {
@@ -133,26 +134,27 @@ body.night-bg {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: max(env(safe-area-inset-top), 20px) max(env(safe-area-inset-left), 16px) max(env(safe-area-inset-bottom), 20px) max(env(safe-area-inset-right), 16px);
     box-sizing: border-box;
+    z-index: 1;
 }
 
 /* Responsive card design */
 .weather-card {
     width: 100%;
     max-width: 400px;
-    min-height: 500px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    padding: 32px 24px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     transition: all 0.3s ease;
+    padding: 24px;
+    margin-top: 20px;
 }
 
 /* Weather info container with dynamic styling */
@@ -183,6 +185,13 @@ body.white-bg .weather-info-container {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
+    max-width: 100%;
+}
+
+#forecast-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 16px;
 }
 
 .forecast-item:hover {
@@ -222,17 +231,21 @@ body.white-bg .forecast-item:hover {
 }
 
 /* Landscape orientation adjustments */
-@media screen and (orientation: landscape) {
+@media screen and (orientation: landscape) and (max-height: 767px) {
     .bg-gradient-to-r {
-        padding: max(env(safe-area-inset-top), 12px) max(env(safe-area-inset-left), 20px) max(env(safe-area-inset-bottom), 12px) max(env(safe-area-inset-right), 20px);
+        padding: 12px 20px;
     }
     
     .weather-card {
-        max-width: 600px;
-        min-height: 400px;
+        max-width: 700px; /* Increased max-width for landscape */
+        min-height: auto; /* Removed fixed min-height */
+        flex-direction: column;
+        gap: 20px; /* Reduced gap */
+    }
+
+    #weather-content {
         flex-direction: row;
-        align-items: center;
-        gap: 32px;
+        align-items: flex-start;
     }
 }
 
@@ -249,11 +262,51 @@ body.white-bg .forecast-item:hover {
     }
 }
 
-/* Large screen optimizations */
-@media screen and (min-width: 768px) {
+/* Tablet and larger screen optimizations */
+@media screen and (min-width: 640px) {
     .weather-card {
-        max-width: 500px;
-        padding: 40px 32px;
+        max-width: 700px; /* Adjusted for better fit */
+        padding: 32px;
+    }
+
+    #forecast-container {
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    }
+}
+
+/* Desktop optimizations */
+@media screen and (min-width: 1024px) {
+    .weather-card {
+        max-width: 900px;
+        padding: 40px;
+    }
+
+    #weather-content {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 24px; /* Reduced gap for a tighter fit */
+    }
+
+    #weather-info {
+        flex: 1 1 40%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .weather-info-container {
+        flex-grow: 1;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    #forecast-container {
+        flex: 1 1 60%;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px; /* Reduced gap for a tighter fit */
     }
 }
 

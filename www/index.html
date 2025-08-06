@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Weather App</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,10 +18,13 @@
             <button id="location-btn" class="responsive-button bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors transform hover:scale-105 flex items-center justify-center"><i class="fas fa-map-marker-alt"></i></button>
         </div>
         <div id="location-info" class="text-gray-600 text-lg text-center"></div>
-        <div id="weather-info" class="opacity-0 transform translate-y-5 transition-all duration-500"></div>
-        <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-5 gap-4"></div>
+        <div id="weather-content">
+            <div id="weather-info" class="opacity-0 transform translate-y-5 transition-all duration-500"></div>
+            <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-5 gap-4"></div>
+        </div>
         <div class="attribution text-xs text-gray-500 text-center mt-auto">
             <p>Data &copy; OpenStreetMap contributors, ODbL 1.0. <a href="http://osm.org/copyright" target="_blank" class="text-blue-500 hover:underline">http://osm.org/copyright</a></p>
+            <p>by el jeque y cardo en 5 mins</p>
         </div>
     </div>
     <div class="loader-container hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 justify-center items-center z-50">
