@@ -1,0 +1,19 @@
+{
+  "weather_app_title": "Aplicación del Clima",
+  "enter_city_placeholder": "Introduce la ciudad",
+  "search_button": "Buscar",
+  "location_button": "Usar mi ubicación",
+  "current_weather_title": "Clima Actual",
+  "temperature_label": "Temperatura",
+  "wind_speed_label": "Velocidad del Viento",
+  "forecast_title": "Pronóstico de 5 Días",
+  "city_not_found_error": "Ciudad no encontrada. Por favor, inténtalo de nuevo.",
+  "fetch_coords_error": "No se pudieron obtener las coordenadas.",
+  "fetch_weather_error": "No se pudieron obtener los datos del clima.",
+  "fetch_city_name_error": "No se pudo obtener el nombre de la ciudad.",
+  "geolocation_error": "Error de geolocalización",
+  "geolocation_not_supported": "La geolocalización no es compatible con este dispositivo/navegador.",
+  "invalid_weather_data": "Datos meteorológicos no válidos recibidos.",
+  "language": "Idioma",
+  "attribution_author": "Por el Jeque Y Cardo en 5 minutos"
+}

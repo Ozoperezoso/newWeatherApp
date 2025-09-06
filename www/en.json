@@ -1,0 +1,19 @@
+{
+  "weather_app_title": "Weather App",
+  "enter_city_placeholder": "Enter city",
+  "search_button": "Search",
+  "location_button": "Use my location",
+  "current_weather_title": "Current Weather",
+  "temperature_label": "Temperature",
+  "wind_speed_label": "Wind Speed",
+  "forecast_title": "5-Day Forecast",
+  "city_not_found_error": "City not found. Please try again.",
+  "fetch_coords_error": "Could not fetch coordinates.",
+  "fetch_weather_error": "Could not fetch weather data.",
+  "fetch_city_name_error": "Could not fetch city name.",
+  "geolocation_error": "Geolocation error",
+  "geolocation_not_supported": "Geolocation is not supported by this device/browser.",
+  "invalid_weather_data": "Invalid weather data received.",
+  "language": "Language",
+  "attribution_author": "by el Jeque & Cardo y 5 minutes"
+}

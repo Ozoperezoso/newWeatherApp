@@ -1,3 +1,113 @@
+// Internationalization (i18n)
+let currentLanguage = 'en';
+let translations = {};
+
+// Function to load translations
+async function loadTranslations(lang) {
+    try {
+        const response = await fetch(`${lang}.json?v=${new Date().getTime()}`);
+        if (!response.ok) {
+            console.error(`Could not load translation file for ${lang}.`);
+            return;
+        }
+        translations = await response.json();
+        updateUI();
+    } catch (error) {
+        console.error('Error loading translations:', error);
+    }
+}
+
+// Function to get translated string
+function t(key) {
+    return translations[key] || key;
+}
+
+// Update UI with translated text
+function updateUI() {
+    document.querySelector('.responsive-title').textContent = t('weather_app_title');
+    document.getElementById('city-input').placeholder = t('enter_city_placeholder');
+    document.querySelector('#search-btn span').textContent = t('search_button');
+    document.querySelector('#location-btn span').textContent = t('location_button');
+    document.getElementById('options-menu').firstChild.textContent = t('language');
+    document.getElementById('attribution-author').innerHTML = t('attribution_author');
+
+    if (lastWeatherData) {
+        // Re-render weather info
+        const weatherInfoDiv = document.getElementById('weather-info');
+        if (weatherInfoDiv.innerHTML) {
+            weatherInfoDiv.querySelector('h2').textContent = t('current_weather_title');
+            const tempLabel = weatherInfoDiv.querySelector('p:nth-of-type(2)');
+            if (tempLabel) {
+                const tempValue = tempLabel.textContent.split(':')[1];
+                tempLabel.textContent = `${t('temperature_label')}: ${tempValue}`;
+            }
+            const windLabel = weatherInfoDiv.querySelector('p:nth-of-type(3)');
+            if (windLabel) {
+                const windValue = windLabel.textContent.split(':')[1];
+                windLabel.textContent = `${t('wind_speed_label')}: ${windValue}`;
+            }
+            updateTime(lastWeatherData.timezone);
+        }
+
+        // Re-render forecast
+        const forecast = lastWeatherData.daily;
+        const forecastContainer = document.getElementById('forecast-container');
+        if (forecastContainer.innerHTML) {
+            let forecastHTML = `<h3 class="col-span-full text-2xl font-bold text-gray-700 mb-4 text-center">${t('forecast_title')}</h3>`;
+            
+            const nextFiveDaysTime = forecast.time.slice(1, 6);
+            const nextFiveDaysWeatherCode = forecast.weathercode.slice(1, 6);
+            const nextFiveDaysTempMax = forecast.temperature_2m_max.slice(1, 6);
+            const nextFiveDaysTempMin = forecast.temperature_2m_min.slice(1, 6);
+
+            const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
+            for (let i = 0; i < nextFiveDaysTime.length; i++) {
+                const day = new Date(nextFiveDaysTime[i]);
+                const weekday = day.toLocaleDateString(locale, { weekday: 'short' });
+                const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+
+                const forecastIcon = weatherIcons[nextFiveDaysWeatherCode[i]] ? weatherIcons[nextFiveDaysWeatherCode[i]].day : 'wi wi-na';
+                const forecastIconColor = getWeatherIconColor(nextFiveDaysWeatherCode[i]);
+                forecastHTML += `
+                    <div class="forecast-item text-center transform transition-transform duration-300 hover:scale-105">
+                        <p class="font-semibold text-gray-600 mb-2">${capitalizedWeekday}</p>
+                        <i class="${forecastIcon} text-4xl ${forecastIconColor} my-2"></i>
+                        <p class="text-sm text-gray-500">${Math.round(nextFiveDaysTempMax[i])}°C / ${Math.round(nextFiveDaysTempMin[i])}°C</p>
+                    </div>
+                `;
+            }
+            forecastContainer.innerHTML = forecastHTML;
+        }
+    }
+}
+
+// Dropdown menu logic
+const optionsMenu = document.getElementById('options-menu');
+const languageDropdown = document.getElementById('language-dropdown');
+
+optionsMenu.addEventListener('click', (event) => {
+    event.stopPropagation();
+    languageDropdown.classList.toggle('hidden');
+});
+
+// Close the dropdown if the user clicks outside of it
+window.addEventListener('click', function(event) {
+  if (!optionsMenu.contains(event.target)) {
+    languageDropdown.classList.add('hidden');
+  }
+});
+
+languageDropdown.addEventListener('click', (event) => {
+    if (event.target.tagName === 'A') {
+        const lang = event.target.dataset.lang;
+        if (lang) {
+            currentLanguage = lang;
+            loadTranslations(currentLanguage);
+            languageDropdown.classList.add('hidden');
+        }
+    }
+});
+
 // Status Bar Management
 let StatusBar;
 
@@ -11,6 +121,9 @@ document.addEventListener('deviceready', () => {
 
 // Also try to initialize when DOM is loaded (for web testing)
 document.addEventListener('DOMContentLoaded', () => {
+    // Load default language
+    loadTranslations(currentLanguage);
+
     // Small delay to ensure Capacitor is ready
     setTimeout(() => {
         if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
@@ -168,7 +281,7 @@ const handleLocation = async () => {
             displayWeather(weather);
             await displayLocationInfo(latitude, longitude);
         } catch (error) {
-            displayError(`Geolocation error: ${error.message}`);
+            displayError(`${t('geolocation_error')}: ${error.message}`);
         } finally {
             hideLoader();
         }
@@ -196,12 +309,12 @@ const handleLocation = async () => {
                 }
             },
             (error) => {
-                displayError(`Geolocation error: ${error.message}`);
+                displayError(`${t('geolocation_error')}: ${error.message}`);
                 hideLoader();
             }
         );
     } else {
-        displayError('Geolocation is not supported by this device/browser.');
+        displayError(t('geolocation_not_supported'));
     }
 };
 
@@ -234,34 +347,36 @@ backgroundManager.resetToDefault();
 
 async function getCoordinates(cityName) {
     const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${cityName}&format=json&limit=1`);
-    if (!response.ok) throw new Error('Could not fetch coordinates.');
+    if (!response.ok) throw new Error(t('fetch_coords_error'));
     const data = await response.json();
     if (data.length > 0) return { latitude: data[0].lat, longitude: data[0].lon };
-    throw new Error('City not found. Please try again.');
+    throw new Error(t('city_not_found_error'));
 }
 
 async function getWeatherData(latitude, longitude) {
     const API_URL = 'https://api.open-meteo.com/v1/forecast';
     const response = await fetch(`${API_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=7&timezone=auto`);
-    if (!response.ok) throw new Error('Could not fetch weather data.');
+    if (!response.ok) throw new Error(t('fetch_weather_error'));
     return await response.json();
 }
 
 async function getCityName(latitude, longitude) {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`);
-    if (!response.ok) throw new Error('Could not fetch city name.');
+    if (!response.ok) throw new Error(t('fetch_city_name_error'));
     const data = await response.json();
     const city = data.address.city || data.address.town || data.address.village || 'Unknown Location';
+    const state = data.address.state || '';
     const country = data.address.country || '';
-    return { city, country };
+    return { city, state, country };
 }
 
 async function displayLocationInfo(latitude, longitude) {
     try {
         const location = await getCityName(latitude, longitude);
+        const locationString = [location.city, location.state, location.country].filter(Boolean).join(', ');
         locationInfoDiv.innerHTML = `
             <div class="weather-info-container">
-                <p class="text-gray-600 text-lg text-center font-semibold">📍 ${location.city}, ${location.country}</p>
+                <p class="text-gray-600 text-lg text-center font-semibold">📍 ${locationString}</p>
             </div>
         `;
     } catch (error) {
@@ -295,9 +410,13 @@ function getWeatherIconColor(weatherCode) {
     return isDay ? 'text-gray-800' : 'text-gray-200'; // Default
 }
 
+let lastWeatherData = null;
+
 function displayWeather(data) {
+    lastWeatherData = data;
+
     if (!data || !data.current_weather || !data.daily) {
-        displayError('Invalid weather data received.');
+        displayError(t('invalid_weather_data'));
         return;
     }
 
@@ -308,31 +427,35 @@ function displayWeather(data) {
 
     weatherInfo.innerHTML = `
         <div class="weather-info-container">
-            <h2 class="text-3xl font-bold text-gray-700 text-center mb-4">Current Weather</h2>
+            <h2 class="text-3xl font-bold text-gray-700 text-center mb-4">${t('current_weather_title')}</h2>
             <div class="text-center">
                 <i class="${weatherIcon} text-7xl ${iconColor} my-4"></i>
                 <p id="date-time" class="text-xl text-gray-600 mb-2"></p>
-                <p class="text-xl text-gray-600 mb-2">Temperature: ${weather.temperature}°C</p>
-                <p class="text-xl text-gray-600">Wind Speed: ${weather.windspeed} km/h</p>
+                <p class="text-xl text-gray-600 mb-2">${t('temperature_label')}: ${weather.temperature}°C</p>
+                <p class="text-xl text-gray-600">${t('wind_speed_label')}: ${weather.windspeed} km/h</p>
             </div>
         </div>
     `;
 
     const forecast = data.daily;
-    let forecastHTML = '<h3 class="col-span-full text-2xl font-bold text-gray-700 mb-4 text-center">5-Day Forecast</h3>';
+    let forecastHTML = `<h3 class="col-span-full text-2xl font-bold text-gray-700 mb-4 text-center">${t('forecast_title')}</h3>`;
     
     const nextFiveDaysTime = forecast.time.slice(1, 6);
     const nextFiveDaysWeatherCode = forecast.weathercode.slice(1, 6);
     const nextFiveDaysTempMax = forecast.temperature_2m_max.slice(1, 6);
     const nextFiveDaysTempMin = forecast.temperature_2m_min.slice(1, 6);
 
+    const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
     for (let i = 0; i < nextFiveDaysTime.length; i++) {
         const day = new Date(nextFiveDaysTime[i]);
+        const weekday = day.toLocaleDateString(locale, { weekday: 'short' });
+        const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+
         const forecastIcon = weatherIcons[nextFiveDaysWeatherCode[i]] ? weatherIcons[nextFiveDaysWeatherCode[i]].day : 'wi wi-na'; // Always use day icons for forecast
         const forecastIconColor = getWeatherIconColor(nextFiveDaysWeatherCode[i]);
         forecastHTML += `
             <div class="forecast-item text-center transform transition-transform duration-300 hover:scale-105">
-                <p class="font-semibold text-gray-600 mb-2">${day.toLocaleDateString('en-US', { weekday: 'short' })}</p>
+                <p class="font-semibold text-gray-600 mb-2">${capitalizedWeekday}</p>
                 <i class="${forecastIcon} text-4xl ${forecastIconColor} my-2"></i>
                 <p class="text-sm text-gray-500">${Math.round(nextFiveDaysTempMax[i])}°C / ${Math.round(nextFiveDaysTempMin[i])}°C</p>
             </div>
@@ -355,6 +478,7 @@ function updateTime(timezone) {
     const dateTimeElement = document.getElementById('date-time');
     if (dateTimeElement && timezone) {
         const now = new Date();
+        const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
         const options = {
             timeZone: timezone,
             month: 'long',
@@ -364,16 +488,24 @@ function updateTime(timezone) {
             minute: 'numeric',
             hour12: true,
         };
-        const formatter = new Intl.DateTimeFormat('en-US', options);
-        const parts = formatter.formatToParts(now);
+        const formatter = new Intl.DateTimeFormat(locale, options);
+        
+        if (locale === 'es-ES') {
+            const parts = formatter.formatToParts(now);
+            const weekday = parts.find(p => p.type === 'weekday').value;
+            const month = parts.find(p => p.type === 'month').value;
+            
+            const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+            const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
-        const month = parts.find(p => p.type === 'month').value;
-        const day = parts.find(p => p.type === 'day').value;
-        const weekday = parts.find(p => p.type === 'weekday').value;
-        const hour = parts.find(p => p.type === 'hour').value;
-        const minute = parts.find(p => p.type === 'minute').value;
-        const dayPeriod = parts.find(p => p.type === 'dayPeriod').value.toLowerCase();
+            const day = parts.find(p => p.type === 'day').value;
+            const hour = parts.find(p => p.type === 'hour').value;
+            const minute = parts.find(p => p.type === 'minute').value;
+            const dayPeriod = parts.find(p => p.type === 'dayPeriod').value.toLowerCase();
 
-        dateTimeElement.textContent = `${month} ${day}, ${weekday}, ${hour}:${minute}${dayPeriod}`;
+            dateTimeElement.textContent = `${capitalizedWeekday}, ${day} de ${capitalizedMonth}, ${hour}:${minute}${dayPeriod}`;
+        } else {
+            dateTimeElement.textContent = formatter.format(now);
+        }
     }
 }

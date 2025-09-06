@@ -255,6 +255,7 @@ body.white-bg .forecast-item:hover {
         margin: 0 8px;
         padding: 24px 20px;
         border-radius: 20px;
+        padding-top: 5rem; /* Add padding to push content down */
     }
     
     .bg-gradient-to-r {
@@ -334,4 +335,8 @@ body.white-bg .forecast-item:hover {
 /* Loader positioning for notch devices */
 .loader-container {
     padding-top: env(safe-area-inset-top);
+}
+
+#language-dropdown {
+    z-index: 100;
 }
