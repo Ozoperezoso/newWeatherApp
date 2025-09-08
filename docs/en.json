@@ -15,5 +15,8 @@
   "geolocation_not_supported": "Geolocation is not supported by this device/browser.",
   "invalid_weather_data": "Invalid weather data received.",
   "language": "Language",
-  "attribution_author": "by el Jeque & Cardo y 5 minutes"
+  "attribution_author": "by el Jeque & Cardo y 5 minutes",
+  "geolocation_permission_denied": "Geolocation permission denied.",
+  "geolocation_position_unavailable": "Geolocation position unavailable.",
+  "geolocation_timeout": "Geolocation request timed out."
 }

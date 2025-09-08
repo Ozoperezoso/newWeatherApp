@@ -15,5 +15,8 @@
   "geolocation_not_supported": "La geolocalización no es compatible con este dispositivo/navegador.",
   "invalid_weather_data": "Datos meteorológicos no válidos recibidos.",
   "language": "Idioma",
-  "attribution_author": "Por el Jeque Y Cardo en 5 minutos"
+  "attribution_author": "Por el Jeque Y Cardo en 5 minutos",
+  "geolocation_permission_denied": "Permiso de geolocalización denegado.",
+  "geolocation_position_unavailable": "Posición de geolocalización no disponible.",
+  "geolocation_timeout": "La solicitud de geolocalización ha caducado."
 }

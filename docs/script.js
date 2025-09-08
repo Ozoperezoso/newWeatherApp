@@ -136,28 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize Status Bar settings
 const initializeStatusBar = async () => {
     try {
-        // For Android, we need to set the style first
-        await StatusBar.setStyle({ style: 'LIGHT' });
-        
-        // Set status bar background color to transparent
-        await StatusBar.setBackgroundColor({ color: '#00000000' });
-        
-        // For Android, set overlay to true to make status bar transparent
-        // This allows the background color to show through
-        await StatusBar.setOverlaysWebView({ overlay: true });
-        
-        // Hide the status bar for full screen experience
-        await StatusBar.hide();
-        
-        // Additional Android-specific settings
-        if (Capacitor.getPlatform() === 'android') {
-            // Set status bar to be transparent with colored content
-            await StatusBar.setBackgroundColor({ color: '#00000000' });
-            // Ensure light content (white icons/text)
-            await StatusBar.setStyle({ style: 'LIGHT' });
+        if (Capacitor.getPlatform() === 'ios') {
+            await Capacitor.Plugins.StatusBar.setStyle({ style: 'LIGHT' });
+            await Capacitor.Plugins.StatusBar.setOverlaysWebView({ overlay: true });
+        } else if (Capacitor.getPlatform() === 'android') {
+            await Capacitor.Plugins.StatusBar.setStyle({ style: 'LIGHT' });
+            await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#00000000' });
+            await Capacitor.Plugins.StatusBar.setOverlaysWebView({ overlay: true });
         }
-        
-        console.log('Status Bar initialized successfully - Full screen mode enabled');
+        console.log('Status Bar initialized successfully');
     } catch (error) {
         console.log('Status Bar not available:', error);
     }
@@ -179,50 +166,9 @@ let timeInterval; // To hold the interval for time updates
 
 // Background management system
 const backgroundManager = {
-    // Set background based on screen/page
-    setBackground(type) {
-        // Remove all background classes
-        document.body.classList.remove('default-bg', 'white-bg', 'sunny-bg', 'cloudy-bg', 'rainy-bg', 'snowy-bg', 'stormy-bg', 'night-bg');
-        
-        // Add the new background class
-        document.body.classList.add(`${type}-bg`);
-        
-        console.log(`Background changed to: ${type}`);
-    },
-    
-    // Set background based on weather condition
-    setWeatherBackground(weatherCode) {
-        const hour = new Date().getHours();
-        const isNight = hour < 6 || hour > 18;
-        
-        let backgroundType = 'default';
-        
-        // Weather code mapping to background types
-        if (weatherCode >= 0 && weatherCode <= 3) {
-            backgroundType = isNight ? 'night' : 'sunny';
-        } else if (weatherCode >= 45 && weatherCode <= 48) {
-            backgroundType = 'cloudy';
-        } else if (weatherCode >= 51 && weatherCode <= 67) {
-            backgroundType = 'rainy';
-        } else if (weatherCode >= 71 && weatherCode <= 77) {
-            backgroundType = 'snowy';
-        } else if (weatherCode >= 80 && weatherCode <= 82) {
-            backgroundType = 'rainy';
-        } else if (weatherCode >= 85 && weatherCode <= 86) {
-            backgroundType = 'snowy';
-        } else if (weatherCode >= 95 && weatherCode <= 99) {
-            backgroundType = 'stormy';
-        } else {
-            backgroundType = isNight ? 'night' : 'sunny';
-        }
-        
-        this.setBackground(backgroundType);
-    },
-    
-    // Reset to default background
-    resetToDefault() {
-        this.setBackground('default');
-    }
+    setBackground(type) { /* do nothing */ },
+    setWeatherBackground(weatherCode) { /* do nothing */ },
+    resetToDefault() { /* do nothing */ }
 };
 
 const showLoader = () => {
@@ -281,7 +227,22 @@ const handleLocation = async () => {
             displayWeather(weather);
             await displayLocationInfo(latitude, longitude);
         } catch (error) {
-            displayError(`${t('geolocation_error')}: ${error.message}`);
+            let message;
+            switch (error.code) {
+                case 'PERMISSION_DENIED':
+                    message = t('geolocation_permission_denied');
+                    break;
+                case 'POSITION_UNAVAILABLE':
+                    message = t('geolocation_position_unavailable');
+                    break;
+                case 'TIMEOUT':
+                    message = t('geolocation_timeout');
+                    break;
+                default:
+                    message = `${t('geolocation_error')}: ${error.message}`;
+                    break;
+            }
+            displayError(message);
         } finally {
             hideLoader();
         }
@@ -309,7 +270,22 @@ const handleLocation = async () => {
                 }
             },
             (error) => {
-                displayError(`${t('geolocation_error')}: ${error.message}`);
+                let message;
+                switch (error.code) {
+                    case 1:
+                        message = t('geolocation_permission_denied');
+                        break;
+                    case 2:
+                        message = t('geolocation_position_unavailable');
+                        break;
+                    case 3:
+                        message = t('geolocation_timeout');
+                        break;
+                    default:
+                        message = `${t('geolocation_error')}: ${error.message}`;
+                        break;
+                }
+                displayError(message);
                 hideLoader();
             }
         );

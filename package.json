@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx cap sync",
-    "serve": "npx http-server www -p 8080 -o",
-    "dev": "npx http-server www -p 8080 -o"
+    "serve": "npx http-server docs -p 8081 -o",
+    "dev": "npx http-server docs -p 8083 -o"
   },
   "keywords": [],
   "author": "",

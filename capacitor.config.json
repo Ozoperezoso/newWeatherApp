@@ -1,12 +1,12 @@
 {
   "appId": "com.example.weatherapp",
   "appName": "WeatherApp",
-  "webDir": "www",
+  "webDir": "docs",
   "bundledWebRuntime": false,
   "plugins": {
     "StatusBar": {
       "style": "light",
-      "backgroundColor": "#00000000",
+      "backgroundColor": "#667eea",
       "overlaysWebView": true
     },
     "SplashScreen": {

@@ -39,50 +39,14 @@ body {
 html {
     min-height: 100vh;
     width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-attachment: fixed;
     background-size: cover;
     transition: background 0.5s ease;
 }
 
 body {
-    background-attachment: fixed;
-    background-size: cover;
-    transition: background 0.5s ease;
-}
-
-/* Default background (main screen) */
-body.default-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-/* White background for weather results */
-body.white-bg {
-    background: #ffffff;
-}
-
-/* Weather condition backgrounds */
-body.sunny-bg {
-    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-}
-
-body.cloudy-bg {
-    background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
-}
-
-body.rainy-bg {
-    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-}
-
-body.snowy-bg {
-    background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
-}
-
-body.stormy-bg {
-    background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
-}
-
-body.night-bg {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    /* The background is now on the html element */
 }
 
 /* Status bar height compensation */
@@ -169,13 +133,6 @@ body.night-bg {
     transition: all 0.3s ease;
 }
 
-/* White background specific styling */
-body.white-bg .weather-info-container {
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
 /* Forecast items with dynamic styling */
 .forecast-item {
     background: rgba(255, 255, 255, 0.9);
@@ -198,18 +155,6 @@ body.white-bg .weather-info-container {
     transform: translateY(-2px);
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
     background: rgba(255, 255, 255, 0.95);
-}
-
-/* White background specific forecast styling */
-body.white-bg .forecast-item {
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-body.white-bg .forecast-item:hover {
-    background: rgba(248, 250, 252, 1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 /* Responsive text sizing */
