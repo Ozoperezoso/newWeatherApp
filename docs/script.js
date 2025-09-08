@@ -138,10 +138,11 @@ const initializeStatusBar = async () => {
     try {
         if (Capacitor.getPlatform() === 'ios') {
             await Capacitor.Plugins.StatusBar.setStyle({ style: 'LIGHT' });
+            await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#667eea' });
             await Capacitor.Plugins.StatusBar.setOverlaysWebView({ overlay: true });
         } else if (Capacitor.getPlatform() === 'android') {
             await Capacitor.Plugins.StatusBar.setStyle({ style: 'LIGHT' });
-            await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#00000000' });
+            await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#667eea' });
             await Capacitor.Plugins.StatusBar.setOverlaysWebView({ overlay: true });
         }
         console.log('Status Bar initialized successfully');
