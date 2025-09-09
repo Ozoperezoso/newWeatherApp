@@ -121,6 +121,7 @@ body {
     margin-top: 20px;
 }
 
+
 /* Weather info container with dynamic styling */
 .weather-info-container {
     background: rgba(255, 255, 255, 0.95);
@@ -135,20 +136,38 @@ body {
 
 /* Forecast items with dynamic styling */
 .forecast-item {
-    background: rgba(255, 255, 255, 0.9);
+    /* background is now set dynamically */
     backdrop-filter: blur(10px);
     border-radius: 16px;
-    padding: 16px;
+    padding: 16px 2px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
     max-width: 100%;
+    min-height: 120px; /* Added for height */
+    display: flex; /* Added for vertical centering */
+    flex-direction: column; /* Added for vertical centering */
+    justify-content: space-between; /* Added for vertical centering */
+}
+
+.forecast-item .text-xs { /* Targeting the weather description paragraph */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #forecast-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 16px;
+}
+
+.hourly-forecast-container, .daily-forecast-container {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .forecast-item:hover {
@@ -189,6 +208,7 @@ body {
     }
 
     #weather-content {
+        display: flex;
         flex-direction: row;
         align-items: flex-start;
     }
@@ -229,7 +249,7 @@ body {
 
     #weather-content {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: stretch;
         gap: 24px; /* Reduced gap for a tighter fit */
     }
@@ -284,4 +304,46 @@ body {
 
 #language-dropdown {
     z-index: 100;
+}
+
+/* New layout for weather info and map */
+#weather-info-map-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Changed from 20% to 20px */
+    flex-wrap: wrap; /* Added for responsiveness */
+}
+
+#weather-info {
+    flex: 1 1 calc(40% - 10px); /* Adjusted flex basis */
+    height: 400px;
+}
+
+#map {
+    flex: 1 1 calc(40% - 10px); /* Adjusted flex basis */
+    height: 400px; /* A default height for the map */
+    border-radius: 16px;
+}
+
+/* New internal layout for weather-info card */
+.weather-icon-temp-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.weather-details {
+    margin-top: 20px;
+}
+
+/* Media query for smaller screens to stack weather info and map */
+@media screen and (max-width: 768px) {
+    #weather-info-map-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    #weather-info, #map {
+        flex: 1 1 100%; /* Take full width on small screens */
+    }
 }
