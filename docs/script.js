@@ -41,7 +41,7 @@ function updateUI() {
 
     if (lastWeatherData) {
         // Re-render weather info
-        displayWeather(lastWeatherData, true);
+        displayWeather(lastWeatherData);
     }
 }
 
@@ -421,20 +421,19 @@ function updateTime(timezone) {
     const timeElement = document.getElementById('time-display');
     if (timeElement && timezone) {
         const now = new Date();
-        const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
         const options = {
             timeZone: timezone,
             hour: 'numeric',
             minute: 'numeric',
             hour12: true,
         };
-        timeElement.textContent = new Intl.DateTimeFormat(locale, options).format(now);
+        timeElement.textContent = new Intl.DateTimeFormat('en-US', options).format(now);
     }
 }
 
-function displayWeather(data, isUpdate = false) {
-    
-    
+function displayWeather(data) {
+
+
     lastWeatherData = data;
 
     const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
@@ -450,11 +449,10 @@ function displayWeather(data, isUpdate = false) {
     const iconColor = getWeatherIconColor(weather.weather_code);
     const backgroundColor = getWeatherBackgroundColor(weather.weather_code);
 
-    if (!isUpdate) {
-        let osmBbox;
-        let mapSrc;
+    let osmBbox;
+    let mapSrc;
 
-        if (Array.isArray(data.boundingbox) && data.boundingbox.length === 4) {
+    if (Array.isArray(data.boundingbox) && data.boundingbox.length === 4) {
             const bbox = data.boundingbox;
             const minLat = parseFloat(bbox[0]);
             const maxLat = parseFloat(bbox[1]);
@@ -481,15 +479,18 @@ function displayWeather(data, isUpdate = false) {
                 <p class="text-lg text-gray-600 text-center mt-2">${getWeatherDescription(weather.weather_code)}</p>
                 <div class="weather-details mt-4 text-center flex justify-around items-start">
                     <div class="detail-item flex flex-col items-center">
-                        <p class="text-gray-600 text-lg"><i class="wi wi-strong-wind mr-2"></i>${t('wind_speed_label')}</p>
+                        <i class="wi wi-strong-wind text-2xl mb-1"></i>
+                        <div class="text-gray-600 text-lg">${t('wind_speed_label')}</div>
                         <p class="text-gray-800 text-xl font-bold">${weather.wind_speed_10m} ${t('unit_km_per_hour')}</p>
                     </div>
                     <div class="detail-item flex flex-col items-center">
-                        <p class="text-gray-600 text-lg"><i class="wi wi-humidity mr-2"></i>${t('humidity_label')}</p>
+                        <i class="wi wi-humidity text-2xl mb-1"></i>
+                        <div class="text-gray-600 text-lg">${t('humidity_label')}</div>
                         <p class="text-gray-800 text-xl font-bold">${weather.relative_humidity_2m}${t('unit_percent')}</p>
                     </div>
                     <div class="detail-item flex flex-col items-center">
-                        <p class="text-gray-600 text-lg"><i class="wi wi-fog mr-2"></i>${t('visibility_label')}</p>
+                        <i class="wi wi-fog text-2xl mb-1"></i>
+                        <div class="text-gray-600 text-lg">${t('visibility_label')}</div>
                         <p class="text-gray-800 text-xl font-bold">${weather.visibility / 1000} ${t('unit_km')}</p>
                     </div>
                 </div>
@@ -530,19 +531,19 @@ function displayWeather(data, isUpdate = false) {
             const weatherDescription = getWeatherDescription(nextFourHoursWeatherCode[i]);
 
             hourlyForecastHTML += `
-                <div class="forecast-item text-center transform transition-transform duration-300 hover:scale-105" style="background-color: ${hexToRgba(getWeatherBackgroundColor(nextFourHoursWeatherCode[i]), 0.4)};">
+                <div class="forecast-item text-center transform transition-transform duration-300 hover:scale-105" style="background-color: ${hexToRgba(getWeatherBackgroundColor(nextFourHoursWeatherCode[i]), 0.4)}; justify-content: space-between;">
                     <p class="font-semibold text-gray-600 mb-2">${formattedHour}</p>
                     <i class="${hourlyIcon} text-4xl ${hourlyIconColor} my-2"></i>
                     <p class="text-xs text-gray-500">${weatherDescription}</p>
                     <p class="text-sm text-gray-500">${Math.round(nextFourHoursTemp[i])}°C</p>
-                    <div class="flex justify-center items-center text-xs text-gray-500 mt-1">
+                    <div class="flex justify-between items-center text-xs text-gray-500 mt-1">
                         <i class="wi wi-strong-wind mr-1"></i> ${nextFourHoursWindSpeed[i]} ${t('unit_km_per_hour')}
                     </div>
-                    <div class="flex justify-center items-center text-xs text-gray-500">
+                    <div class="flex justify-between items-center text-xs text-gray-500">
                         <i class="wi wi-humidity mr-1"></i> ${nextFourHoursHumidity[i]}${t('unit_percent')}
                     </div>
-                    <div class="flex justify-center items-center text-xs text-gray-500">
-                        <i class="wi wi-fog mr-1"></i> ${nextFourHoursVisibility[i] / 1000} ${t('unit_km')}
+                    <div class="flex justify-between items-center text-xs text-gray-500">
+                        <i class="wi wi-fog mr-1"></i> ${Math.round(nextFourHoursVisibility[i] / 1000)} ${t('unit_km')}
                     </div>
                 </div>
             `;
@@ -594,8 +595,6 @@ function displayWeather(data, isUpdate = false) {
                 </div>
             </div>
         `;
-
-    }
 
     const timezone = data.timezone;
     if (timeInterval) {
