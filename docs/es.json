@@ -5,10 +5,10 @@
   "location_button": "Usar mi ubicación",
   "current_weather_title": "Clima Actual",
   "temperature_label": "Temperatura",
-  "wind_speed_label": "Velocidad del Viento",
+  "wind_speed_label": "Viento",
   "humidity_label": "Humedad",
   "visibility_label": "Visibilidad",
-  "forecast_title": "Pronóstico de 5 Días",
+  "forecast_title": "Pronóstico de 4 Días",
   "city_not_found_error": "Ciudad no encontrada. Por favor, inténtalo de nuevo.",
   "fetch_coords_error": "No se pudieron obtener las coordenadas.",
   "fetch_weather_error": "No se pudieron obtener los datos del clima.",
@@ -16,7 +16,7 @@
   "geolocation_error": "Error de geolocalización",
   "geolocation_not_supported": "La geolocalización no es compatible con este dispositivo/navegador.",
   "invalid_weather_data": "Datos meteorológicos no válidos recibidos.",
-  "language": "Idioma",
+  
   "attribution_author": "Por el Jeque Y Cardo en 5 minutos",
   "geolocation_permission_denied": "Permiso de geolocalización denegado.",
   "geolocation_position_unavailable": "Posición de geolocalización no disponible.",
@@ -42,7 +42,5 @@
   "unit_percent": "%",
   "unit_km": "km",
   "unit_celsius": "°C",
-  "page_title": "Aplicación del Clima",
-  "lang_english": "Inglés",
-  "lang_spanish": "Español"
+  "page_title": "Aplicación del Clima"
 }

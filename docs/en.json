@@ -5,10 +5,10 @@
   "location_button": "Use my location",
   "current_weather_title": "Current Weather",
   "temperature_label": "Temperature",
-  "wind_speed_label": "Wind Speed",
+  "wind_speed_label": "Wind",
   "humidity_label": "Humidity",
   "visibility_label": "Visibility",
-  "forecast_title": "5-Day Forecast",
+  "forecast_title": "4-Day Forecast",
   "city_not_found_error": "City not found. Please try again.",
   "fetch_coords_error": "Could not fetch coordinates.",
   "fetch_weather_error": "Could not fetch weather data.",
@@ -16,7 +16,7 @@
   "geolocation_error": "Geolocation error",
   "geolocation_not_supported": "Geolocation is not supported by this device/browser.",
   "invalid_weather_data": "Invalid weather data received.",
-  "language": "Language",
+  
   "attribution_author": "by el Jeque & Cardo y 5 minutes",
   "geolocation_permission_denied": "Geolocation permission denied.",
   "geolocation_position_unavailable": "Geolocation position unavailable.",
@@ -42,7 +42,5 @@
   "unit_percent": "%",
   "unit_km": "km",
   "unit_celsius": "°C",
-  "page_title": "Weather App",
-  "lang_english": "English",
-  "lang_spanish": "Spanish"
+  "page_title": "Weather App"
 }

@@ -29,11 +29,9 @@ function updateUI() {
     document.getElementById('city-input').placeholder = t('enter_city_placeholder');
     document.querySelector('#search-btn span').textContent = t('search_button');
     document.querySelector('#location-btn span').textContent = t('location_button');
-    document.getElementById('options-menu').firstChild.textContent = t('language');
+    
 
-    // Update language options
-    document.querySelector('[data-i18n="lang_english"]').textContent = t('lang_english');
-    document.querySelector('[data-i18n="lang_spanish"]').textContent = t('lang_spanish');
+    
 
     document.getElementById('attribution-author').innerHTML = t('attribution_author');
     document.querySelector('[data-i18n="osm_attribution"]').innerHTML = 'Data &copy; OpenStreetMap contributors, ODbL 1.0. <a href="http://osm.org/copyright" target="_blank" class="text-blue-500 hover:underline">http://osm.org/copyright</a>';
@@ -62,10 +60,17 @@ window.addEventListener('click', function(event) {
 });
 
 languageDropdown.addEventListener('click', (event) => {
-    if (event.target.tagName === 'A') {
-        const lang = event.target.dataset.lang;
+    const link = event.target.closest('a');
+    if (link) {
+        const lang = link.dataset.lang;
         if (lang) {
             currentLanguage = lang;
+            const flagImg = document.getElementById('selected-lang-flag');
+            if (lang === 'en') {
+                flagImg.src = 'https://flagcdn.com/w40/us.png';
+            } else if (lang === 'es') {
+                flagImg.src = 'https://flagcdn.com/w40/es.png';
+            }
             loadTranslations(currentLanguage);
             languageDropdown.classList.add('hidden');
         }
@@ -536,20 +541,20 @@ function displayWeather(data) {
                     <i class="${hourlyIcon} text-4xl ${hourlyIconColor} my-2"></i>
                     <p class="text-xs text-gray-500">${weatherDescription}</p>
                     <p class="text-sm text-gray-500">${Math.round(nextFourHoursTemp[i])}°C</p>
-                    <div class="flex justify-between items-center text-xs text-gray-500 mt-1">
+                    <div class="flex justify-center items-center text-xs text-gray-500 mt-1">
                         <i class="wi wi-strong-wind mr-1"></i> ${nextFourHoursWindSpeed[i]} ${t('unit_km_per_hour')}
                     </div>
-                    <div class="flex justify-between items-center text-xs text-gray-500">
+                    <div class="flex justify-center items-center text-xs text-gray-500">
                         <i class="wi wi-humidity mr-1"></i> ${nextFourHoursHumidity[i]}${t('unit_percent')}
                     </div>
-                    <div class="flex justify-between items-center text-xs text-gray-500">
+                    <div class="flex justify-center items-center text-xs text-gray-500">
                         <i class="wi wi-fog mr-1"></i> ${Math.round(nextFourHoursVisibility[i] / 1000)} ${t('unit_km')}
                     </div>
                 </div>
             `;
         }
         // Wrap in a container similar to forecastContainer
-        hourlyForecastHTML = `<div class="hourly-forecast-container grid grid-cols-4 gap-4 mt-8">${hourlyForecastHTML}</div>`;
+        hourlyForecastHTML = `<div class="hourly-forecast-container grid mt-8">${hourlyForecastHTML}</div>`;
 
         const forecast = data.daily;
         let forecastHTML = `<h3 class="col-span-full text-2xl font-bold text-gray-700 mb-4 text-center">${t('forecast_title')}</h3>`;
@@ -575,7 +580,7 @@ function displayWeather(data) {
                 </div>
             `;
         }
-        forecastHTML = `<div class="daily-forecast-container grid grid-cols-4 gap-4 mt-8">${forecastHTML}</div>`; // Wrap daily forecast
+        forecastHTML = `<div class="daily-forecast-container grid mt-8">${forecastHTML}</div>`; // Wrap daily forecast
 
         weatherMainContent.innerHTML = `
             <div class="flex flex-wrap -mx-2">

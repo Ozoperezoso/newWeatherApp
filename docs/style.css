@@ -226,6 +226,20 @@ body {
     .bg-gradient-to-r {
         padding: max(env(safe-area-inset-top), 16px) max(env(safe-area-inset-left), 12px) max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-right), 12px);
     }
+
+    .weather-details .detail-item {
+        padding: 0 4px;
+    }
+
+    .hourly-forecast-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 25px !important;
+    }
+
+    .daily-forecast-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 25px !important;
+    }
 }
 
 /* Tablet and larger screen optimizations */
@@ -273,6 +287,12 @@ body {
         flex: 1 1 60%;
         grid-template-columns: repeat(5, 1fr);
         gap: 12px; /* Reduced gap for a tighter fit */
+    }
+
+    .hourly-forecast-container, .daily-forecast-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        height: 100%;
     }
 }
 
