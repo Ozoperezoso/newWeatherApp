@@ -1,6 +1,6 @@
 
 
-import { loadTranslations, setLanguage, currentLanguage } from './i18n.js';
+import { loadTranslations, setLanguage, currentLanguage, t } from './i18n.js';
 import { getCoordinates, getWeatherData } from './api.js';
 import { showLoader, hideLoader, displayWeather, displayError, displayLocationInfo, clearUI } from './ui.js';
 import { initializeTheme } from './theme.js';
