@@ -6,43 +6,48 @@ export async function getCoordinates(cityName) {
     if (!response.ok) throw new Error(t('fetch_coords_error'));
     const data = await response.json();
 
+    if (data.length === 0) {
+        throw new Error(t('city_not_found_error'));
+    }
+
     let bestResult = null;
-    let bestRank = Infinity;
+    let highestScore = -1;
 
     for (const result of data) {
-        let currentRank = Infinity;
-        if (result.class === 'place') {
-            if (result.type === 'city' && result.place_rank === 15) {
-                currentRank = 15;
-            } else if (result.type === 'town' && result.place_rank === 16) {
-                currentRank = 16;
-            } else if (result.type === 'village' && result.place_rank === 17) {
-                currentRank = 17;
-            }
+        // We only care about results that have a bounding box
+        if (!result.boundingbox) {
+            continue;
         }
 
-        if (currentRank < bestRank) {
-            bestRank = currentRank;
+        let score = 0;
+        if (result.class === 'place' && (result.type === 'city' || result.type === 'town' || result.type === 'village')) {
+            score = 10; // High score for preferred types
+        } else if (result.class === 'boundary' && result.type === 'administrative') {
+            score = 5;  // Lower score for administrative boundaries
+        }
+
+        if (score > highestScore) {
+            highestScore = score;
             bestResult = result;
         }
     }
 
+    // If after all that we still didn't find a preferred type, fall back to the first result that has a bounding box.
     if (!bestResult) {
-        for (const result of data) {
-            if (result.class === 'boundary' && result.type === 'administrative') {
-                if (!bestResult || result.place_rank < bestResult.place_rank) {
-                    bestResult = result;
-                }
-            }
-        }
+        bestResult = data.find(r => r.boundingbox);
     }
 
-    if (bestResult) {
-        return { latitude: bestResult.lat, longitude: bestResult.lon, type: bestResult.type, boundingbox: bestResult.boundingbox || null };
-    } else if (data.length > 0) {
-        return { latitude: data[0].lat, longitude: data[0].lon, type: data[0].type, boundingbox: data[0].boundingbox || null };
+    // If absolutely nothing has a bounding box, fall back to the very first result from the API.
+    if (!bestResult) {
+        bestResult = data[0];
     }
-    throw new Error(t('city_not_found_error'));
+
+    return {
+        latitude: bestResult.lat,
+        longitude: bestResult.lon,
+        type: bestResult.type,
+        boundingbox: bestResult.boundingbox || null
+    };
 }
 
 export async function getWeatherData(latitude, longitude) {
