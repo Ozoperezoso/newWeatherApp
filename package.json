@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "npx http-server docs -p 8081 -o"
+    "serve": "npx http-server src -p 8081 -o"
   },
   "keywords": [],
   "author": "",

@@ -8,7 +8,7 @@ export let translations = {};
 
 export async function loadTranslations(lang) {
     try {
-        const response = await fetch(`/${lang}.json?v=${new Date().getTime()}`);
+        const response = await fetch(`./${lang}.json?v=${new Date().getTime()}`);
         if (!response.ok) {
             console.error(`Could not load translation file for ${lang}.`);
             return;
