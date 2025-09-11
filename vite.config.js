@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   base: '/newWeatherApp/',
-  root: 'src',
+  root: 'docs',
   build: {
     outDir: '../dist',
     emptyOutDir: true,

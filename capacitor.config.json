@@ -1,7 +1,7 @@
 {
   "appId": "com.example.weatherapp",
   "appName": "WeatherApp",
-  "webDir": "src",
+  "webDir": "docs",
   "bundledWebRuntime": false,
   "plugins": {
     "StatusBar": {
