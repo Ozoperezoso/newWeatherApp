@@ -277,6 +277,14 @@ body {
     }
 }
 
+/* Media query for viewports between 481px and 1023px */
+@media screen and (min-width: 481px) and (max-width: 1023px) {
+    .hourly-forecast-container, .daily-forecast-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
 /* Tablet and larger screen optimizations */
 @media screen and (min-width: 640px) {
     .weather-card {

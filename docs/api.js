@@ -4,7 +4,6 @@ export async function getCoordinates(cityName) {
     const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${cityName}&format=json&addressdetails=1`);
     if (!response.ok) throw new Error(t('fetch_coords_error'));
     const data = await response.json();
-    console.log("Nominatim API response for:", cityName, data);
 
     if (data.length === 0) {
         throw new Error(t('city_not_found_error'));
@@ -19,7 +18,6 @@ export async function getCoordinates(cityName) {
 
     // 2. Sort by importance (descending)
     filteredResults.sort((a, b) => b.importance - a.importance);
-    console.log("Highest importance result (after filtering):", filteredResults[0]);
 
     // Select the result with the highest importance (which is now filteredResults[0])
     const bestResult = filteredResults[0];

@@ -26,7 +26,6 @@ const handleSearch = async () => {
         clearUI();
         try {
             const coordinates = await getCoordinates(cityName);
-            console.log("Coordinates from getCoordinates:", coordinates);
             const weather = await getWeatherData(coordinates.latitude, coordinates.longitude);
             const displayData = { ...weather, ...coordinates };
             displayWeather(displayData);
@@ -56,33 +55,23 @@ const handleLocation = async () => {
                     const preciseLocationData = await getCityName(latitude, longitude);
                     const cityName = preciseLocationData.city; // Extract the city name
 
-                    let displayLatitude = latitude;
-                    let displayLongitude = longitude;
-                    let displayBoundingBox = preciseLocationData.boundingbox; // Fallback to reverse geocoding bbox
+                    const locationStringForHistory = [preciseLocationData.city, preciseLocationData.state, preciseLocationData.country].filter(Boolean).join(', ');
 
-                    // 3. Perform a forward geocoding search for the city name to get the town-level bounding box
-                    if (cityName && cityName !== 'Unknown Location') {
-                        try {
-                            const townCoordinates = await getCoordinates(cityName); // This uses our improved logic
-                            displayLatitude = townCoordinates.latitude; // Use town's center for pin
-                            displayLongitude = townCoordinates.longitude;
-                            displayBoundingBox = townCoordinates.boundingbox; // Use town's bounding box
-                        } catch (searchError) {
-                            console.warn("Could not get town-level coordinates for map, falling back to precise location bbox:", searchError);
-                            // If town-level search fails, stick with preciseLocationData's bbox
-                        }
-                    }
+                    // 3. Perform a forward geocoding search using the FULL address string
+                    // This ensures we get the correct town-level bounding box and coordinates
+                    const townCoordinates = await getCoordinates(locationStringForHistory);
 
                     const displayData = {
-                        latitude: displayLatitude,
-                        longitude: displayLongitude,
-                        boundingbox: displayBoundingBox,
+                        latitude: townCoordinates.latitude, // Use town's center for pin
+                        longitude: townCoordinates.longitude,
+                        boundingbox: townCoordinates.boundingbox, // Use town's bounding box
                         ...weather
                     };
                     displayWeather(displayData);
 
-                    const locationString = [preciseLocationData.city, preciseLocationData.state, preciseLocationData.country].filter(Boolean).join(', ');
-                    addToHistory(locationString);
+                    await displayLocationInfo(townCoordinates.latitude, townCoordinates.longitude);
+
+                    addToHistory(locationStringForHistory);
 
                 } catch (error) {
                     displayError(error.message);
