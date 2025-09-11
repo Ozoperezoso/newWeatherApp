@@ -1,7 +1,7 @@
 
 
 import { loadTranslations, setLanguage, currentLanguage, t } from './i18n.js';
-import { getCoordinates, getWeatherData } from './api.js';
+import { getCoordinates, getWeatherData, getCityName } from './api.js';
 import { showLoader, hideLoader, displayWeather, displayError, displayLocationInfo, clearUI } from './ui.js';
 import { initializeTheme } from './theme.js';
 import { initHistory, addToHistory } from './history.js';
@@ -26,8 +26,9 @@ const handleSearch = async () => {
         clearUI();
         try {
             const coordinates = await getCoordinates(cityName);
+            console.log("Coordinates from getCoordinates:", coordinates);
             const weather = await getWeatherData(coordinates.latitude, coordinates.longitude);
-            const displayData = { ...coordinates, ...weather };
+            const displayData = { ...weather, ...coordinates };
             displayWeather(displayData);
             await displayLocationInfo(coordinates.latitude, coordinates.longitude);
             addToHistory(cityName);
@@ -48,11 +49,41 @@ const handleLocation = async () => {
             async (position) => {
                 const { latitude, longitude } = position.coords;
                 try {
+                    // 1. Get weather data for precise location
                     const weather = await getWeatherData(latitude, longitude);
-                    const coordinates = { latitude, longitude };
-                    const displayData = { ...coordinates, ...weather };
+
+                    // 2. Get city name from precise location (reverse geocoding)
+                    const preciseLocationData = await getCityName(latitude, longitude);
+                    const cityName = preciseLocationData.city; // Extract the city name
+
+                    let displayLatitude = latitude;
+                    let displayLongitude = longitude;
+                    let displayBoundingBox = preciseLocationData.boundingbox; // Fallback to reverse geocoding bbox
+
+                    // 3. Perform a forward geocoding search for the city name to get the town-level bounding box
+                    if (cityName && cityName !== 'Unknown Location') {
+                        try {
+                            const townCoordinates = await getCoordinates(cityName); // This uses our improved logic
+                            displayLatitude = townCoordinates.latitude; // Use town's center for pin
+                            displayLongitude = townCoordinates.longitude;
+                            displayBoundingBox = townCoordinates.boundingbox; // Use town's bounding box
+                        } catch (searchError) {
+                            console.warn("Could not get town-level coordinates for map, falling back to precise location bbox:", searchError);
+                            // If town-level search fails, stick with preciseLocationData's bbox
+                        }
+                    }
+
+                    const displayData = {
+                        latitude: displayLatitude,
+                        longitude: displayLongitude,
+                        boundingbox: displayBoundingBox,
+                        ...weather
+                    };
                     displayWeather(displayData);
-                    await displayLocationInfo(latitude, longitude);
+
+                    const locationString = [preciseLocationData.city, preciseLocationData.state, preciseLocationData.country].filter(Boolean).join(', ');
+                    addToHistory(locationString);
+
                 } catch (error) {
                     displayError(error.message);
                 } finally {

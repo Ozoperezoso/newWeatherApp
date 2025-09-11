@@ -1,46 +1,28 @@
-
 import { t } from './i18n.js';
 
 export async function getCoordinates(cityName) {
     const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${cityName}&format=json&addressdetails=1`);
     if (!response.ok) throw new Error(t('fetch_coords_error'));
     const data = await response.json();
+    console.log("Nominatim API response for:", cityName, data);
 
     if (data.length === 0) {
         throw new Error(t('city_not_found_error'));
     }
 
-    let bestResult = null;
-    let highestScore = -1;
+    // 1. Filter out results without bounding box
+    const filteredResults = data.filter(result => result.boundingbox);
 
-    for (const result of data) {
-        // We only care about results that have a bounding box
-        if (!result.boundingbox) {
-            continue;
-        }
-
-        let score = 0;
-        if (result.class === 'place' && (result.type === 'city' || result.type === 'town' || result.type === 'village')) {
-            score = 10; // High score for preferred types
-        } else if (result.class === 'boundary' && result.type === 'administrative') {
-            score = 5;  // Lower score for administrative boundaries
-        }
-
-        if (score > highestScore) {
-            highestScore = score;
-            bestResult = result;
-        }
+    if (filteredResults.length === 0) {
+        throw new Error(t('city_not_found_error')); // Or a more specific error
     }
 
-    // If after all that we still didn't find a preferred type, fall back to the first result that has a bounding box.
-    if (!bestResult) {
-        bestResult = data.find(r => r.boundingbox);
-    }
+    // 2. Sort by importance (descending)
+    filteredResults.sort((a, b) => b.importance - a.importance);
+    console.log("Highest importance result (after filtering):", filteredResults[0]);
 
-    // If absolutely nothing has a bounding box, fall back to the very first result from the API.
-    if (!bestResult) {
-        bestResult = data[0];
-    }
+    // Select the result with the highest importance (which is now filteredResults[0])
+    const bestResult = filteredResults[0];
 
     return {
         latitude: bestResult.lat,
@@ -65,5 +47,5 @@ export async function getCityName(latitude, longitude) {
     const city = data.address.city || data.address.town || data.address.village || 'Unknown Location';
     const state = data.address.state || '';
     const country = data.address.country || '';
-    return { city, state, country };
+    return { city, state, country, boundingbox: data.boundingbox || null };
 }

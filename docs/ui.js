@@ -100,6 +100,7 @@ function updateTime(timezone) {
 }
 
 export function displayWeather(data) {
+    console.log("Data received by displayWeather:", data);
     setLastWeatherData(data);
 
     const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
