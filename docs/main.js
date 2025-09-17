@@ -1,3 +1,5 @@
+
+
 import { loadTranslations, setLanguage, currentLanguage, t } from './i18n.js';
 import { getCoordinates, getWeatherData, getCityName } from './api.js';
 import { showLoader, hideLoader, displayWeather, displayError, displayLocationInfo, clearUI } from './ui.js';
@@ -20,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
 const handleSearch = async () => {
     const cityName = cityInput.value.trim();
     if (cityName) {
-        showLoader(cityName);
+        showLoader();
         clearUI();
         try {
             const coordinates = await getCoordinates(cityName);
             const weather = await getWeatherData(coordinates.latitude, coordinates.longitude);
             const displayData = { ...weather, ...coordinates };
-            await displayWeather(displayData);
+            displayWeather(displayData);
             await displayLocationInfo(coordinates.latitude, coordinates.longitude);
             addToHistory(cityName);
         } catch (error) {
@@ -38,7 +40,7 @@ const handleSearch = async () => {
 };
 
 const handleLocation = async () => {
-    showLoader(t('your_location'));
+    showLoader();
     clearUI();
 
     if (navigator.geolocation) {
@@ -46,22 +48,29 @@ const handleLocation = async () => {
             async (position) => {
                 const { latitude, longitude } = position.coords;
                 try {
-                    const preciseLocationData = await getCityName(latitude, longitude);
-                    const locationStringForHistory = [preciseLocationData.city, preciseLocationData.state, preciseLocationData.country].filter(Boolean).join(', ');
-                    showLoader(locationStringForHistory);
-
+                    // 1. Get weather data for precise location
                     const weather = await getWeatherData(latitude, longitude);
+
+                    // 2. Get city name from precise location (reverse geocoding)
+                    const preciseLocationData = await getCityName(latitude, longitude);
+                    const cityName = preciseLocationData.city; // Extract the city name
+
+                    const locationStringForHistory = [preciseLocationData.city, preciseLocationData.state, preciseLocationData.country].filter(Boolean).join(', ');
+
+                    // 3. Perform a forward geocoding search using the FULL address string
+                    // This ensures we get the correct town-level bounding box and coordinates
                     const townCoordinates = await getCoordinates(locationStringForHistory);
 
                     const displayData = {
-                        latitude: townCoordinates.latitude,
+                        latitude: townCoordinates.latitude, // Use town's center for pin
                         longitude: townCoordinates.longitude,
-                        boundingbox: townCoordinates.boundingbox,
+                        boundingbox: townCoordinates.boundingbox, // Use town's bounding box
                         ...weather
                     };
-                    
-                    await displayWeather(displayData);
+                    displayWeather(displayData);
+
                     await displayLocationInfo(townCoordinates.latitude, townCoordinates.longitude);
+
                     addToHistory(locationStringForHistory);
 
                 } catch (error) {
