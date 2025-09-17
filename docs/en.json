@@ -43,5 +43,7 @@
   "unit_km": "km",
   "unit_celsius": "°C",
   "page_title": "Weather App",
-  "recent_searches": "Recent Searches"
+  "recent_searches": "Recent Searches",
+  "loading_results_for": "Loading results for",
+  "your_location": "your location"
 }

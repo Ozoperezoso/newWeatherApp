@@ -5,17 +5,23 @@ import { getCityName } from './api.js';
 const weatherMainContent = document.getElementById('weather-main-content');
 const forecastContainer = document.getElementById('forecast-container');
 const locationInfoDiv = document.getElementById('location-info');
-const loaderContainer = document.querySelector('.loader-container');
+const loaderPopup = document.getElementById('loader-popup');
+const loaderText = document.getElementById('loader-text');
+const weatherContent = document.getElementById('weather-content');
+
 let timeInterval;
 
-export const showLoader = () => {
-    loaderContainer.classList.remove('hidden');
-    loaderContainer.classList.add('flex');
+export const showLoader = (location) => {
+    loaderText.textContent = `${t('loading_results_for')} ${location}`;
+    loaderPopup.classList.remove('hidden');
+    loaderPopup.classList.add('flex');
+    weatherContent.classList.add('hidden');
 };
 
 export const hideLoader = () => {
-    loaderContainer.classList.add('hidden');
-    loaderContainer.classList.remove('flex');
+    loaderPopup.classList.add('hidden');
+    loaderPopup.classList.remove('flex');
+    weatherContent.classList.remove('hidden');
 };
 
 export async function displayLocationInfo(latitude, longitude) {
@@ -99,10 +105,8 @@ function updateTime(timezone) {
     }
 }
 
-export function displayWeather(data) {
+export async function displayWeather(data) {
     setLastWeatherData(data);
-
-    const locale = currentLanguage === 'es' ? 'es-ES' : 'en-US';
 
     if (!data || !data.current || !data.daily) {
         displayError(t('invalid_weather_data'));
@@ -131,26 +135,26 @@ export function displayWeather(data) {
     }
 
     const weatherInfoHtml = `
-        <div id="weather-info" class="weather-info-container animate__animated animate__fadeInUp" style="background-color: ${hexToRgba(backgroundColor, 0.4)};">
-            <h2 class="text-3xl font-bold text-gray-700 text-center mb-2 animate-fade-in-slide-up" style="animation-delay: 0s;">${t('current_weather_title')}</h2>
-            <p class="text-center text-gray-500 mb-4 animate-fade-in-slide-up" id="time-display" style="animation-delay: 0.1s;"></p>
+        <div id="weather-info" class="weather-info-container" style="background-color: ${hexToRgba(backgroundColor, 0.4)}; visibility: hidden;">
+            <h2 class="text-3xl font-bold text-gray-700 text-center mb-2">${t('current_weather_title')}</h2>
+            <p class="text-center text-gray-500 mb-4" id="time-display"></p>
             <div class="weather-icon-temp-container">
-                <i class="${weatherIcon} text-7xl ${iconColor} animate__animated animate__fadeIn animate-fade-in-slide-up" style="animation-delay: 0.2s;"></i>
-                <p class="text-5xl font-bold text-gray-800 animate-fade-in-slide-up" style="animation-delay: 0.3s;">${Math.round(weather.temperature_2m)}°C</p>
+                <i class="${weatherIcon} text-7xl ${iconColor}"></i>
+                <p class="text-5xl font-bold text-gray-800">${Math.round(weather.temperature_2m)}°C</p>
             </div>
-            <p class="text-lg text-gray-600 text-center mt-2 animate-fade-in-slide-up" style="animation-delay: 0.4s;">${getWeatherDescription(weather.weather_code)}</p>
+            <p class="text-lg text-gray-600 text-center mt-2">${getWeatherDescription(weather.weather_code)}</p>
             <div class="weather-details mt-4 text-center flex justify-around items-start">
-                <div class="detail-item flex flex-col items-center animate-fade-in-slide-up" style="animation-delay: 0.5s;">
+                <div class="detail-item flex flex-col items-center">
                     <i class="wi wi-strong-wind text-2xl mb-1"></i>
                     <div class="text-gray-600 text-lg">${t('wind_speed_label')}</div>
                     <p class="text-gray-800 text-xl font-bold">${weather.wind_speed_10m} ${t('unit_km_per_hour')}</p>
                 </div>
-                <div class="detail-item flex flex-col items-center animate-fade-in-slide-up" style="animation-delay: 0.6s;">
+                <div class="detail-item flex flex-col items-center">
                     <i class="wi wi-humidity text-2xl mb-1"></i>
                     <div class="text-gray-600 text-lg">${t('humidity_label')}</div>
                     <p class="text-gray-800 text-xl font-bold">${weather.relative_humidity_2m}${t('unit_percent')}</p>
                 </div>
-                <div class="detail-item flex flex-col items-center animate-fade-in-slide-up" style="animation-delay: 0.7s;">
+                <div class="detail-item flex flex-col items-center">
                     <i class="wi wi-fog text-2xl mb-1"></i>
                     <div class="text-gray-600 text-lg">${t('visibility_label')}</div>
                     <p class="text-gray-800 text-xl font-bold">${weather.visibility / 1000} ${t('unit_km')}</p>
@@ -186,7 +190,7 @@ export function displayWeather(data) {
 
     for (let i = 0; i < nextFourHoursTime.length; i++) {
         const hour = new Date(nextFourHoursTime[i]);
-        const formattedHour = hour.toLocaleTimeString(locale, { hour: 'numeric', hour12: true });
+        const formattedHour = hour.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
 
         const hourlyIcon = weatherIcons[nextFourHoursWeatherCode[i]] ? weatherIcons[nextFourHoursWeatherCode[i]].day : 'wi wi-na';
         const hourlyIconColor = getWeatherIconColor(nextFourHoursWeatherCode[i]);
@@ -222,7 +226,7 @@ export function displayWeather(data) {
 
     for (let i = 0; i < nextFiveDaysTime.length; i++) {
         const day = new Date(nextFiveDaysTime[i]);
-        const weekday = day.toLocaleDateString(locale, { weekday: 'short' });
+        const weekday = day.toLocaleDateString(currentLanguage === 'es' ? 'es-ES' : 'en-US', { weekday: 'short' });
         const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 
         const forecastIcon = weatherIcons[nextFiveDaysWeatherCode[i]] ? weatherIcons[nextFiveDaysWeatherCode[i]].day : 'wi wi-na';
@@ -257,12 +261,20 @@ export function displayWeather(data) {
         </div>
     `;
 
+    const weatherInfo = document.getElementById('weather-info');
     const mapElement = document.getElementById('map');
     const mapIframe = mapElement.querySelector('iframe');
 
-    mapIframe.addEventListener('load', () => {
-        mapElement.classList.add('animate__animated', 'animate__fadeInUp');
+    const mapLoadPromise = new Promise(resolve => {
+        mapIframe.addEventListener('load', () => {
+            mapElement.classList.add('animate__animated', 'animate__fadeInUp');
+            weatherInfo.style.visibility = 'visible';
+            weatherInfo.classList.add('animate__animated', 'animate__fadeInUp');
+            resolve();
+        });
     });
+
+    await mapLoadPromise;
 
     const timezone = data.timezone;
     if (timeInterval) {
